@@ -68,3 +68,17 @@ def add_tab(editor):
 
     tab_n += lines[-1].count("\t")
     editor.insert(editor.index(INSERT), '\t'*tab_n)
+
+def insert_brackets(key, editor, brackets):
+    start_b = brackets[0]
+    end_b = brackets[1]
+    text = editor.get(1.0, 'end')
+    for bracket in brackets:
+        if key.char in bracket:
+            start_count = text.count(bracket[0])
+            end_count = text.count(bracket[1])
+            if start_count > end_count:
+                index = editor.index(INSERT)
+                editor.insert(index, bracket[1])
+                editor.mark_set("insert", index)
+            return

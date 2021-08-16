@@ -73,3 +73,5 @@ class CustomText(Text):
     def update(self):
         for i in range(len(self.listes)):
             self.highlight_pattern_from_list(self.listes[i], self.colors[i], regexp=self.regs[i])
+
+###################################################################################################################################
