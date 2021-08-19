@@ -4,10 +4,26 @@ from tkinter import filedialog, messagebox
 import subprocess
 
 file_path = None
-
 def setFileInfo(file_info):
     file_info.config(text='File: ' + file_path)
 
+    with open('last_open.txt', 'w') as f:
+        f.write(file_path)
+
+def open_last_file(editor, file_info):
+    global file_path
+    try:
+        with open('last_open.txt', 'r') as f:
+            file_path = f.read()
+        with open(file_path, 'r') as f:
+            file = f.read()
+            editor.delete(1.0, END)
+            editor.insert(1.0, file)
+
+        setFileInfo(file_info)
+        editor.update()
+    except:
+        pass
 def Save(editor, file_info):
     global file_path
     if file_path == None:
@@ -39,11 +55,13 @@ def Run(editor, output, file_info):
         Save(editor, file_info)
     output.delete(1.0, END)
     command = 'python ' + file_path
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    outputResult, error = process.communicate()
-    output.insert(1.0, outputResult)
-    output.insert(1.0, error)
-    pass
+
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+    while True:
+        outResult = p.stdout.readline()
+        output.insert(END, outResult)
+        if not outResult:
+            break
 
 def Open(editor, file_info):
     global file_path
@@ -59,6 +77,7 @@ def Open(editor, file_info):
         editor.insert(1.0, file)
 
     setFileInfo(file_info)
+    editor.update()
 
 def add_tab(editor):
     tab_n = 0
